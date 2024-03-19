@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Giphy Search</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 20px auto;
+            text-align: center;
+        }
+        h1 {
+            color: #333;
+        }
+
+        input[type="text"] {
+            padding: 8px;
+            font-size: 16px;
+        }
+
+        button {
+            padding: 8px 20px;
+            background-color: #007bff;
+            border: none;
+            color: white;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        #gifContainer {
+            margin-top: 20px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .gif {
+            margin: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Giphy Search</h1>
+        <input type="text" id="searchInput" placeholder="Search for GIFs">
+        <button id="searchButton">Search</button>
+        <div id="gifContainer"></div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const searchInput = document.getElementById('searchInput');
+            const searchButton = document.getElementById('searchButton');
+            const gifContainer = document.getElementById('gifContainer');
+
+            // Fetch initial GIFs on page load
+            fetchInitialGifs();
+
+            searchButton.addEventListener('click', function() {
+                const searchTerm = searchInput.value.trim();
+                if (searchTerm !== '') {
+                    searchGifs(searchTerm);
+                }
+            });
+
+            async function fetchInitialGifs() {
+                const apiKey = 'cmN1Wuj5G1RIDA6ijhOkcJmqyIaBRpyp'; 
+                const limit = 10; // Number of GIFs to fetch
+                const initialSearchTerm = 'trending'; // You can change this to any initial search term
+                
+                try {
+                    const response = await fetch(`https://api.giphy.com/v1/gifs/search?q=${initialSearchTerm}&api_key=${apiKey}&limit=${limit}`)
+                    const data = await response.json();
+                    displayGifs(data.data);
+                } catch (error) {
+                    console.error('Error fetching GIFs:', error);
+                }
+            }
+
+            async function searchGifs(searchTerm) {
+                const apiKey = 'hKKPxgap96qtacPa2cLzgRzC2lRJzsec'; // Replace with your Giphy API key
+                const limit = 10; // Number of GIFs to fetch
+                try {
+                    const response = await fetch(`https://api.giphy.com/v1/gifs/search?q=${searchTerm}&api_key=${apiKey}&limit=${limit}`);
+                    const data = await response.json();
+                    displayGifs(data.data);
+                } catch (error) {
+                    console.error('Error fetching GIFs:', error);
+                }
+            }
+
+            function displayGifs(gifs) {
+                gifContainer.innerHTML = '';
+                gifs.forEach(gif => {
+                    const gifElement = document.createElement('img');
+                    gifElement.src = gif.images.fixed_height.url;
+                    gifElement.alt = gif.title;
+                    gifElement.classList.add('gif');
+                    gifContainer.appendChild(gifElement);
+                });
+            }
+        });
+    </script>
+</body>
+</html>
